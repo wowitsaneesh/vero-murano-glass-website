@@ -58,3 +58,46 @@ vero-murano-glass-website/
 ├── requirements.txt
 └── .gitignore
 ```
+## Initial Project Backlog
+
+### Must Have
+
+- Set up basic Flask application
+- Create homepage layout
+- Create product catalogue page
+- Create product detail page
+- Create product categories
+- Add user registration and login
+- Add shopping cart
+- Calculate subtotal, GST, and total
+- Create checkout-style order request form
+- Send order request email to Andrea
+- Create admin login
+- Create admin dashboard
+- Allow admin to add, edit, and remove products
+- Allow admin to add, edit, and remove categories
+- Allow admin to upload product images
+
+### Should Have
+
+- Allow Andrea to view submitted order requests in the admin portal
+- Allow Andrea to view registered users
+- Add product search
+- Add product availability status
+- Improve responsive design for mobile and tablet
+
+### Could Have
+
+- Add product videos
+- Add featured collections
+- Add related products
+- Add customer order history
+- Add contact/about page
+
+### Won't Have in Version 1
+
+- Online payment system
+- Live shipping integration
+- Discount codes
+- Customer reviews
+- Wishlist
