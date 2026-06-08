@@ -4,19 +4,6 @@ Vero Murano Glass is a full-stack web development project for a handcrafted Mura
 
 The goal of this project is to build a polished online store-style website without online payments. Customers will be able to browse products, add items to a cart, enter shipping/contact details, and submit an order request. Instead of processing payment online, the website will send the order details to Andrea by email.
 
-This project is also being used as a practical learning project to revise and apply concepts from Agile Web Development, including:
-
-- Agile planning and user stories
-- Git and GitHub workflow
-- HTML, CSS, Bootstrap, and JavaScript
-- Flask backend development
-- Jinja templates
-- Database design with SQLAlchemy
-- User authentication
-- Forms and validation
-- Testing
-- Deployment
-
 ## Planned Features
 
 - Customer-facing product catalogue
@@ -71,7 +58,3 @@ vero-murano-glass-website/
 ├── requirements.txt
 └── .gitignore
 ```
-
-## Project Purpose
-
-This project is being built step by step as a learning-and-building project. Each stage will connect practical implementation with Agile Web Development concepts.
