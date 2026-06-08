@@ -17,10 +17,6 @@ This project is also being used as a practical learning project to revise and ap
 - Testing
 - Deployment
 
-## Current Status
-
-Project setup has started. The initial repository structure is being created.
-
 ## Planned Features
 
 - Customer-facing product catalogue
