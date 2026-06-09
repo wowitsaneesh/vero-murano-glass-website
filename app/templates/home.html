@@ -3,19 +3,49 @@
 {% block content %}
     <main>
         <section class="hero">
-            <h1>Vero Murano Glass</h1>
-            <p>Handcrafted Murano-inspired jewellery and glass accessories.</p>
-            <a href="#" class="hero-button">Browse Products</a>
+            <div class="container">
+                <p class="eyebrow-text">Murano-inspired jewellery</p>
+
+                <h1>Handcrafted glass pieces with timeless colour.</h1>
+
+                <p class="hero-description">
+                    Explore elegant jewellery and glass accessories inspired by the beauty,
+                    colour, and craftsmanship of Murano glass.
+                </p>
+
+                <a href="{{ url_for('products') }}" class="btn btn-dark hero-button">
+                    Shop Collection
+                </a>
+            </div>
         </section>
 
         <section class="featured-section">
-            <h2>Shop by Category</h2>
+            <div class="container">
+                <p class="eyebrow-text">Shop by category</p>
+                <h2>Find your next statement piece</h2>
+            
+                <div class="category-grid">
+                    <a href="{{ url_for('products_by_category', category_name='Necklaces') }}" class="category-card">
+                        <span>Necklaces</span>
+                        <small>Elegant glass pendants and colourful centrepieces</small>
+                    </a>
 
-            <div class="category-grid">
-                <a href="{{ url_for('products_by_category', category_name='Necklaces') }}" class="category-card">Necklaces</a>
-                <a href="{{ url_for('products_by_category', category_name='Bracelets') }}" class="category-card">Bracelets</a>
-                <a href="{{ url_for('products_by_category', category_name='Earrings') }}" class="category-card">Earrings</a>
-                <a href="{{ url_for('products_by_category', category_name='Rings') }}" class="category-card">Rings</a>
+                    <a href="{{ url_for('products_by_category', category_name='Bracelets') }}" class="category-card">
+                        <span>Bracelets</span>
+                        <small>Delicate wristwear with Murano-inspired colour</small>
+                    </a>
+
+                    <a href="{{ url_for('products_by_category', category_name='Earrings') }}" class="category-card">
+                        <span>Earrings</span>
+                        <small>Lightweight glass pieces for everyday styling</small>
+                    </a>
+
+                    <a href="{{ url_for('products_by_category', category_name='Rings') }}" class="category-card">
+                        <span>Rings</span>
+                        <small>Small colourful details designed to stand out</small>
+                    </a>
+                </div>
+                
             </div>
         </section>
     </main>
