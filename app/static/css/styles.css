@@ -111,3 +111,45 @@ footer {
     color: #222;
     text-decoration: underline;
 }
+
+.product-detail-page {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    padding: 60px;
+    align-items: center;
+}
+
+.product-detail-image {
+    height: 450px;
+    background-color: #f1f1f1;
+}
+
+.product-detail-info {
+    text-align: left;
+}
+
+.product-category {
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.product-price {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+.product-description {
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.add-to-cart-button {
+    padding: 14px 32px;
+    background-color: #222;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
