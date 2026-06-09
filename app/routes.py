@@ -1,4 +1,5 @@
 from app import app
+from app.models import Product, Category
 from flask import render_template
 
 @app.route('/')
@@ -7,92 +8,19 @@ def home():
 
 @app.route('/products')
 def products():
-    placeholder_products = [
-        {
-            "id": 1,
-            "name": "Murano-Inspired Glass Necklace",
-            "price": 89.00,
-            "category": "Necklaces",
-        },
-        {
-            "id": 2,
-            "name": "Blue Glass Bracelet",
-            "price": 65.00,
-            "category": "Bracelets",
-        },
-        {
-            "id": 3,
-            "name": "Handcrafted Glass Earrings",
-            "price": 45.00,
-            "category": "Earrings",
-        },
-    ]
-    return render_template('products.html', products=placeholder_products)
+    all_products = Product.query.all()
+    return render_template('products.html', products=all_products)
 
 @app.route("/products/<int:product_id>")
 def product_detail(product_id):
-    placeholder_products = [
-        {
-            "id": 1,
-            "name": "Murano-Inspired Glass Necklace",
-            "price": 89.00,
-            "category": "Necklaces",
-            "description": "A handcrafted Murano-inspired glass necklace with elegant colour details.",
-        },
-        {
-            "id": 2,
-            "name": "Blue Glass Bracelet",
-            "price": 65.00,
-            "category": "Bracelets",
-            "description": "A delicate blue glass bracelet inspired by Venetian glasswork.",
-        },
-        {
-            "id": 3,
-            "name": "Handcrafted Glass Earrings",
-            "price": 45.00,
-            "category": "Earrings",
-            "description": "Lightweight handcrafted glass earrings with a colourful finish.",
-        },
-    ]
-    selected_product = None; 
-
-    for product in placeholder_products:
-        if product["id"] == product_id:
-            selected_product = product
+    selected_product = Product.query.get_or_404(product_id)
     
     return render_template('product_detail.html', product=selected_product)
 
 @app.route("/products/category/<category_name>")
 def products_by_category(category_name):
-    placeholder_products = [
-        {
-            "id": 1,
-            "name": "Murano-Inspired Glass Necklace",
-            "price": 89.00,
-            "category": "Necklaces",
-            "description": "A handcrafted Murano-inspired glass necklace with elegant colour details.",
-        },
-        {
-            "id": 2,
-            "name": "Blue Glass Bracelet",
-            "price": 65.00,
-            "category": "Bracelets",
-            "description": "A delicate blue glass bracelet inspired by Venetian glasswork.",
-        },
-        {
-            "id": 3,
-            "name": "Handcrafted Glass Earrings",
-            "price": 45.00,
-            "category": "Earrings",
-            "description": "Lightweight handcrafted glass earrings with a colourful finish.",
-        },
-    ]
-
-    filtered_products = []
-
-    for product in placeholder_products:
-        if product["category"].lower() == category_name.lower():
-            filtered_products.append(product)
+    selected_category = Category.query.filter_by(name=category_name).first_or_404()
+    filtered_products = Product.query.filter_by(category_id=selected_category.id).all()
 
     return render_template(
         "products.html",
