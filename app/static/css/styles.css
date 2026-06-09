@@ -1,29 +1,81 @@
+:root {
+    --color-bg-start: #fbf7f2;
+    --color-bg-middle: #ffffff;
+    --color-text: #1f1f1f;
+    --color-muted: #666666;
+    --color-accent: #8a5a44;
+    --color-surface-glass: rgba(255, 255, 255, 0.78);
+    --color-border-soft: rgba(138, 90, 68, 0.12);
+    --color-hover-soft: rgba(138, 90, 68, 0.09);
+    --color-footer: #1f1f1f;
+    --color-footer-text: #ffffff;
+    --color-footer-muted: #cfcfcf;
+}
+
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    color: #222;
+    font-family: "Inter", Arial, sans-serif;
+    color: var(--color-text);
+    background: linear-gradient(
+        180deg,
+        var(--color-bg-start) 0%,
+        var(--color-bg-middle) 45%,
+        var(--color-bg-start) 100%
+    );
 }
 
-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 60px;
-    border-bottom: 1px solid #eee;
+.glass-navbar {
+    padding: 18px 0;
+    background: var(--color-surface-glass);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--color-border-soft);
+    box-shadow: 0 8px 30px rgba(31, 31, 31, 0.04);
 }
 
-nav h2 {
-    margin: 0;
+.navbar-brand {
+    font-family: "Playfair Display", serif;
+    letter-spacing: 0.4px;
+    font-size: 25px;
+    color: var(--color-text);
 }
 
-nav a {
-    margin-left: 20px;
-    text-decoration: none;
-    color: #222;
+.navbar-brand:hover {
+    color: var(--color-accent);
+}
+
+.nav-link {
+    color: var(--color-text);
+    font-size: 15px;
+    font-weight: 500;
+    padding: 10px 16px !important;
+    border-radius: 999px;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    color: var(--color-accent);
+    background-color: var(--color-hover-soft);
+}
+
+.navbar .btn-dark {
+    border-radius: 999px;
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    background-color: var(--color-text);
+    border-color: var(--color-text);
+    transition: all 0.2s ease;
+}
+
+.navbar .btn-dark:hover {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    transform: translateY(-1px);
 }
 
 .hero {
@@ -68,11 +120,17 @@ nav a {
     background-color: white;
 }
 
-footer {
+.site-footer {
+    margin-top: 80px;
+    padding: 44px 0;
     text-align: center;
-    padding: 30px;
-    border-top: 1px solid #eee;
-    color: #666;
+    background-color: var(--color-footer);
+    color: var(--color-footer-text);
+}
+
+.footer-subtext {
+    color: var(--color-footer-muted);
+    font-size: 14px;
 }
 
 .page-section {
