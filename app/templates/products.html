@@ -2,8 +2,13 @@
 
 {% block content %}
     <main class="page-section">
-        <h1>Products</h1>
-        <p>Browse our handcrafted Murano-inspired jewellery and glass accessories.</p>
+        {% if selected_category %}
+            <h1>{{ selected_category }}</h1>
+            <p>Browse products in the {{ selected_category }} category.</p>
+        {% else %}
+            <h1>Products</h1>
+            <p>Browse our handcrafted Murano-inspired jewellery and glass accessories.</p>
+        {% endif %}
 
         <div class="product-grid">
             {% for product in products %}

@@ -12,10 +12,10 @@
             <h2>Shop by Category</h2>
 
             <div class="category-grid">
-                <div class="category-card">Necklaces</div>
-                <div class="category-card">Bracelets</div>
-                <div class="category-card">Earrings</div>
-                <div class="category-card">Rings</div>
+                <a href="{{ url_for('products_by_category', category_name='Necklaces') }}" class="category-card">Necklaces</a>
+                <a href="{{ url_for('products_by_category', category_name='Bracelets') }}" class="category-card">Bracelets</a>
+                <a href="{{ url_for('products_by_category', category_name='Earrings') }}" class="category-card">Earrings</a>
+                <a href="{{ url_for('products_by_category', category_name='Rings') }}" class="category-card">Rings</a>
             </div>
         </section>
     </main>
