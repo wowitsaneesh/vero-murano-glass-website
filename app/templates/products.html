@@ -14,7 +14,7 @@
                     <p>{{ product.category }}</p>
                     <p>${{ "%.2f"|format(product.price) }}</p>
 
-                    <a href="#" class="product-link">View Details</a>
+                    <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-link">View Details</a>
                 </div>
             {% endfor %}
         </div>
