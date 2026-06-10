@@ -12,7 +12,7 @@
                     Sign in to continue. Admin users will be directed to the admin dashboard later.
                 </p>
 
-                <form>
+                <form method="POST" action="{{ url_for('login') }}">
                     <div class="mb-3">
                         <label for="email" class="form-label">Email address</label>
                         <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email">
