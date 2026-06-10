@@ -1,11 +1,12 @@
 from app import app, db
-from app.models import Category, Product
+from app.models import Category, Product, User
 
 
 with app.app_context():
     # Clear existing data
     Product.query.delete()
     Category.query.delete()
+    User.query.delete()
 
     # Create categories
     necklaces = Category(name="Necklaces")
@@ -14,6 +15,17 @@ with app.app_context():
     rings = Category(name="Rings")
 
     db.session.add_all([necklaces, bracelets, earrings, rings])
+    db.session.commit()
+
+    # Create development admin user
+    admin_user = User(
+        name="Andrea",
+        email="admin@veromurano.com",
+        role="admin"
+    )
+    admin_user.set_password("admin123")
+
+    db.session.add(admin_user)
     db.session.commit()
 
     # Create products
