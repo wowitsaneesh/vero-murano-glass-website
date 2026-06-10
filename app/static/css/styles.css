@@ -370,3 +370,73 @@ body {
 .back-link:hover {
     text-decoration: underline;
 }
+
+.auth-page {
+    padding: 90px 20px;
+}
+
+.auth-card {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 44px;
+    border: 1px solid var(--color-border-soft);
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: 0 24px 70px rgba(31, 31, 31, 0.08);
+}
+
+.auth-card h1 {
+    margin-bottom: 16px;
+    font-family: "Playfair Display", serif;
+    font-size: clamp(34px, 5vw, 48px);
+    line-height: 1.1;
+    color: var(--color-text);
+}
+
+.auth-intro {
+    margin-bottom: 30px;
+    color: var(--color-muted);
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.auth-card .form-label {
+    color: var(--color-text);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.auth-card .form-control {
+    padding: 13px 14px;
+    border-radius: 14px;
+    border: 1px solid var(--color-border-soft);
+}
+
+.auth-card .form-control:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 0.2rem rgba(138, 90, 68, 0.12);
+}
+
+.auth-button {
+    width: 100%;
+    border-radius: 999px;
+    padding: 13px 30px;
+    font-weight: 600;
+}
+
+.auth-switch-text {
+    margin: 24px 0 0;
+    color: var(--color-muted);
+    font-size: 14px;
+    text-align: center;
+}
+
+.auth-switch-text a {
+    color: var(--color-accent);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.auth-switch-text a:hover {
+    text-decoration: underline;
+}

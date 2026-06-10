@@ -27,3 +27,11 @@ def products_by_category(category_name):
         products=filtered_products,
         selected_category=category_name
     )
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
+@app.route("/signup")
+def signup():
+    return render_template("signup.html")
