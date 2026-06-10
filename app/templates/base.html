@@ -42,13 +42,23 @@
                         <a class="nav-link" href="#">Cart</a>
                     </li>
 
-                    <li class="nav-item">
-                        {% if session.get("user_id") %}
+                    {% if session.get("user_id") %}
+                        <li class="nav-item">
+                            {% if session.get("user_role") == "admin" %}
+                                <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
+                            {% else %}
+                                <a class="nav-link" href="{{ url_for('account') }}">My Account</a>
+                            {% endif %}
+                        </li>
+
+                        <li class="nav-item">
                             <a class="btn btn-dark px-4" href="{{ url_for('logout') }}">Logout</a>
-                        {% else %}
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
                             <a class="btn btn-dark px-4" href="{{ url_for('login') }}">Login / Signup</a>
-                        {% endif %}
-                    </li>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
