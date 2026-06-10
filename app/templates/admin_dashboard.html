@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <main class="auth-page">
+    <main class="dashboard-page">
         <div class="container">
-            <div class="auth-card">
+            <section class="dashboard-header">
                 <p class="eyebrow-text">Admin dashboard</p>
 
                 <h1>Welcome, {{ session["user_name"] }}</h1>
@@ -12,10 +12,36 @@
                     This is the admin dashboard. Later, Andrea will manage products, categories, images, and order enquiries here.
                 </p>
 
-                <a href="{{ url_for('logout') }}" class="btn btn-dark auth-button">
-                    Logout
-                </a>
-            </div>
+            </section>
+            <section class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h2>Products</h2>
+                    <p>
+                        Later, Andrea will be able to add, edit, remove, and manage product availability here.
+                    </p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h2>Categories</h2>
+                    <p>
+                        Later, Andrea will be able to create and update product categories here.
+                    </p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h2>Orders</h2>
+                    <p>
+                        Later, Andrea will be able to view customer order enquiry requests here.
+                    </p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h2>Media</h2>
+                    <p>
+                        Later, Andrea will be able to manage product images and videos here.
+                    </p>
+                </div>
+            </section>
         </div>
     </main>
 {% endblock %}

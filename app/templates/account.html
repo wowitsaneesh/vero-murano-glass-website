@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <main class="auth-page">
+    <main class="dashboard-page">
         <div class="container">
-            <div class="auth-card">
+            <section class="dashboard-header">
                 <p class="eyebrow-text">My account</p>
 
                 <h1>Welcome, {{ session["user_name"] }}</h1>
@@ -11,11 +11,30 @@
                 <p class="auth-intro">
                     This is your account page. Later, customers will be able to view saved details and order enquiries here.
                 </p>
+                
+            </section>
+            <section class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h2>Saved Details</h2>
+                    <p>
+                        Later, customers will be able to save contact and shipping details here.
+                    </p>
+                </div>
 
-                <a href="{{ url_for('logout') }}" class="btn btn-dark auth-button">
-                    Logout
-                </a>
-            </div>
+                <div class="dashboard-card">
+                    <h2>Order Enquiries</h2>
+                    <p>
+                        Later, customers will be able to view previous order enquiry requests here.
+                    </p>
+                </div>
+
+                <div class="dashboard-card">
+                    <h2>Cart</h2>
+                    <p>
+                        Later, customers will be able to return to their cart from this account page.
+                    </p>
+                </div>
+            </section>
         </div>
     </main>
 {% endblock %}
