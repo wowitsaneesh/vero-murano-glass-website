@@ -1,6 +1,6 @@
 from app import app
-from app.models import Product, Category
-from flask import render_template
+from app.models import Product, Category, User
+from flask import render_template, request, redirect, url_for, session
 
 @app.route('/')
 def home():
@@ -28,9 +28,46 @@ def products_by_category(category_name):
         selected_category=category_name
     )
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        user = User.query.filter_by(email=email).first()
+
+        if user and user.check_password(password):
+            session["user_id"] = user.id
+            session["user_name"] = user.name
+            session["user_role"] = user.role
+
+            if user.is_admin():
+                return redirect(url_for("admin_dashboard"))
+
+            return redirect(url_for("account"))
+
     return render_template("login.html")
+
+@app.route("/account")
+def account():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    return render_template("account.html")
+
+
+@app.route("/admin/dashboard")
+def admin_dashboard():
+    if session.get("user_role") != "admin":
+        return redirect(url_for("login"))
+
+    return render_template("admin_dashboard.html")
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("home"))
 
 @app.route("/signup")
 def signup():

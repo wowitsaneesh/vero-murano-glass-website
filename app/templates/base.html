@@ -43,7 +43,11 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="btn btn-dark px-4" href="{{ url_for('login') }}">Login / Signup</a>
+                        {% if session.get("user_id") %}
+                            <a class="btn btn-dark px-4" href="{{ url_for('logout') }}">Logout</a>
+                        {% else %}
+                            <a class="btn btn-dark px-4" href="{{ url_for('login') }}">Login / Signup</a>
+                        {% endif %}
                     </li>
                 </ul>
             </div>
