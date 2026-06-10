@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <main class="auth-page">
+        <div class="container">
+            <div class="auth-card">
+                <p class="eyebrow-text">Welcome back</p>
+
+                <h1>Login to your account</h1>
+
+                <p class="auth-intro">
+                    Sign in to continue. Admin users will be directed to the admin dashboard later.
+                </p>
+
+                <form>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email address</label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password">
+                    </div>
+
+                    <button type="submit" class="btn btn-dark auth-button">
+                        Login
+                    </button>
+                </form>
+
+                <p class="auth-switch-text">
+                    New here?
+                    <a href="{{ url_for('signup') }}">Create an account</a>
+                </p>
+            </div>
+        </div>
+    </main>
+{% endblock %}
