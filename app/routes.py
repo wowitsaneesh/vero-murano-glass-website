@@ -1,6 +1,26 @@
-from app import app
+import re
+
+from app import app, db
 from app.models import Product, Category, User
 from flask import render_template, request, redirect, url_for, session
+
+def is_valid_password(password):
+    if len(password) < 8:
+        return False
+
+    if not re.search(r"[A-Z]", password):
+        return False
+
+    if not re.search(r"[a-z]", password):
+        return False
+
+    if not re.search(r"[0-9]", password):
+        return False
+
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        return False
+
+    return True
 
 @app.route('/')
 def home():
@@ -69,6 +89,57 @@ def logout():
     session.clear()
     return redirect(url_for("home"))
 
-@app.route("/signup")
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+
+        if password != confirm_password:
+            return render_template(
+                "signup.html",
+                error="Passwords do not match.",
+                name=name,
+                email=email
+            )
+
+        if not is_valid_password(password):
+            return render_template(
+                "signup.html",
+                error="Password must be at least 8 characters and include uppercase, lowercase, number, and special character.",
+                name=name,
+                email=email
+            )
+        
+        existing_user = User.query.filter_by(email=email).first()
+
+        if existing_user:
+            return render_template(
+                "signup.html",
+                error="An account with this email already exists.",
+                name=name,
+                email=email
+            )
+        
+        new_user = User(
+            name=name,
+            email=email,
+            role="customer"
+        )
+
+        new_user.set_password(password)
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        session["user_id"] = new_user.id
+        session["user_name"] = new_user.name
+        session["user_role"] = new_user.role
+
+        return redirect(url_for("account"))
+
     return render_template("signup.html")
+
+    

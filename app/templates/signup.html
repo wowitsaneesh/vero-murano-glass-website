@@ -12,20 +12,34 @@
                     Create an account to make future order enquiries easier.
                 </p>
 
-                <form>
+                {% if error %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('signup') }}">
                     <div class="mb-3">
                         <label for="name" class="form-label">Full name</label>
-                        <input type="text" id="name" name="name" class="form-control" placeholder="Enter your full name">
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Enter your full name" value="{{ name or '' }}">
                     </div>
 
                     <div class="mb-3">
                         <label for="email" class="form-label">Email address</label>
-                        <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email">
+                        <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" value="{{ email or '' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Create a password">
+                        <div class="form-text">
+                            Password must be at least 8 characters and include uppercase, lowercase, number, and special character.
+                        </div>
                     </div>
 
                     <div class="mb-4">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" id="password" name="password" class="form-control" placeholder="Create a password">
+                        <label for="confirm_password" class="form-label">Confirm password</label>
+                        <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Re-enter your password">
                     </div>
 
                     <button type="submit" class="btn btn-dark auth-button">
