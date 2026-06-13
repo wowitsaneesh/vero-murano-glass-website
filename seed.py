@@ -34,21 +34,18 @@ with app.app_context():
             name="Murano-Inspired Glass Necklace",
             description="A handcrafted Murano-inspired glass necklace with elegant colour details.",
             price=89.00,
-            image_url=None,
             category_id=necklaces.id,
         ),
         Product(
             name="Blue Glass Bracelet",
             description="A delicate blue glass bracelet inspired by Venetian glasswork.",
             price=65.00,
-            image_url=None,
             category_id=bracelets.id,
         ),
         Product(
             name="Handcrafted Glass Earrings",
             description="Lightweight handcrafted glass earrings with a colourful finish.",
             price=45.00,
-            image_url=None,
             category_id=earrings.id,
         ),
     ]
