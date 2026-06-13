@@ -4,21 +4,88 @@
     <main class="product-detail-page">
         <div class="container">
             <div class="product-detail-layout">
-                <div class="product-detail-image"></div>
+                <div
+                    id="productMediaCarousel"
+                    class="carousel slide product-media-carousel"
+                >
+                    <div class="carousel-inner">
+                        {% for media in product.media %}
+                            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                {% if media.media_type == "image" %}
+                                    <img
+                                        src="{{ url_for('static', filename='uploads/products/' ~ media.filename) }}"
+                                        alt="{{ product.name }}"
+                                        class="product-carousel-media"
+                                    >
+                                {% elif media.media_type == "video" %}
+                                    <video
+                                        class="product-carousel-media"
+                                        controls
+                                    >
+                                        <source
+                                            src="{{ url_for('static', filename='uploads/products/' ~ media.filename) }}"
+                                        >
+                                        Your browser does not support video playback.
+                                    </video>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="carousel-item active">
+                                <div class="product-detail-image"></div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if product.media|length > 1 %}
+                        <button
+                            class="carousel-control-prev"
+                            type="button"
+                            data-bs-target="#productMediaCarousel"
+                            data-bs-slide="prev"
+                        >
+                            <span class="carousel-control-prev-icon"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+
+                        <button
+                            class="carousel-control-next"
+                            type="button"
+                            data-bs-target="#productMediaCarousel"
+                            data-bs-slide="next"
+                        >
+                            <span class="carousel-control-next-icon"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    {% endif %}
+                </div>
 
                 <div class="product-detail-info">
-                    <p class="product-category">{{ product.category.name }}</p>
+                    <p class="product-category">
+                        {{ product.category.name }}
+                    </p>
 
                     <h1>{{ product.name }}</h1>
 
-                    <p class="product-price">${{ "%.2f"|format(product.price) }}</p>
+                    <p class="product-price">
+                        ${{ "%.2f"|format(product.price) }}
+                    </p>
 
-                    <p class="product-description">{{ product.description }}</p>
+                    <p class="product-description">
+                        {{ product.description }}
+                    </p>
 
                     <div class="product-actions">
-                        <button class="btn btn-dark add-to-cart-button">Add to Cart</button>
+                        <button
+                            type="button"
+                            class="btn btn-dark add-to-cart-button"
+                        >
+                            Add to Cart
+                        </button>
 
-                        <a href="{{ url_for('products') }}" class="back-link">
+                        <a
+                            href="{{ url_for('products') }}"
+                            class="back-link"
+                        >
                             Back to Products
                         </a>
                     </div>

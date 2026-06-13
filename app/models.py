@@ -42,9 +42,35 @@ class Product(db.Model):
     name = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text, nullable=False)
     price = db.Column(db.Float, nullable=False)
-    image_url = db.Column(db.String(255), nullable=True)
+    
 
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
 
+    media = db.relationship(
+        "ProductMedia",
+        backref="product",
+        lazy=True,
+        cascade="all, delete-orphan"
+    )
+
     def __repr__(self):
         return f"<Product {self.name}>"
+    
+class ProductMedia(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    filename = db.Column(
+        db.String(255),
+        nullable=False
+    )
+
+    media_type = db.Column(
+        db.String(20),
+        nullable=False
+    )
+
+    product_id = db.Column(
+        db.Integer,
+        db.ForeignKey("product.id"),
+        nullable=False
+    )

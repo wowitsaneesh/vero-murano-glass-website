@@ -8,20 +8,44 @@
 
                 {% if selected_category %}
                     <h1>{{ selected_category }}</h1>
-                    <p>Browse handcrafted pieces in the {{ selected_category }} category.</p>
+                    <p>
+                        Browse handcrafted pieces in the
+                        {{ selected_category }} category.
+                    </p>
                 {% else %}
                     <h1>Explore the collection</h1>
-                    <p>Browse handcrafted Murano-inspired jewellery and glass accessories.</p>
+                    <p>
+                        Browse handcrafted Murano-inspired jewellery
+                        and glass accessories.
+                    </p>
                 {% endif %}
             </div>
 
             <div class="product-grid">
                 {% for product in products %}
+                    {% set product_images = product.media
+                        | selectattr("media_type", "equalto", "image")
+                        | list
+                    %}
+
                     <div class="product-card">
-                        <div class="product-image-placeholder"></div>
+                        {% if product_images %}
+                            <img
+                                src="{{ url_for(
+                                    'static',
+                                    filename='uploads/products/' ~ product_images[0].filename
+                                ) }}"
+                                alt="{{ product.name }}"
+                                class="product-card-image"
+                            >
+                        {% else %}
+                            <div class="product-image-placeholder"></div>
+                        {% endif %}
 
                         <div class="product-card-body">
-                            <p class="product-card-category">{{ product.category.name }}</p>
+                            <p class="product-card-category">
+                                {{ product.category.name }}
+                            </p>
 
                             <h2>{{ product.name }}</h2>
 
@@ -30,14 +54,24 @@
                             </p>
 
                             <div class="product-card-footer">
-                                <p class="product-card-price">${{ "%.2f"|format(product.price) }}</p>
+                                <p class="product-card-price">
+                                    ${{ "%.2f"|format(product.price) }}
+                                </p>
 
-                                <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-link stretched-link">
+                                <a
+                                    href="{{ url_for(
+                                        'product_detail',
+                                        product_id=product.id
+                                    ) }}"
+                                    class="product-link stretched-link"
+                                >
                                     View Details
                                 </a>
                             </div>
                         </div>
                     </div>
+                {% else %}
+                    <p>No products are available yet.</p>
                 {% endfor %}
             </div>
         </div>
