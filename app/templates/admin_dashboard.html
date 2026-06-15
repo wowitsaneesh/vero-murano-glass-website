@@ -24,7 +24,7 @@
                 <div class="dashboard-card">
                     <h2>Categories</h2>
                     <p>
-                        Create and update product categories.
+                        Create, rename, and remove product categories.
                     </p>
                 </div>
 
@@ -51,8 +51,8 @@
                     </div>
 
                     <button
-                        class="btn btn-dark"
                         type="button"
+                        class="btn btn-dark"
                         data-bs-toggle="modal"
                         data-bs-target="#addProductModal"
                     >
@@ -162,6 +162,7 @@
                                                     name="name"
                                                     class="form-control"
                                                     value="{{ product.name }}"
+                                                    maxlength="150"
                                                     required
                                                 >
                                             </div>
@@ -176,12 +177,12 @@
 
                                                 <input
                                                     type="number"
-                                                    step="0.01"
-                                                    min="0"
                                                     id="edit_product_price_{{ product.id }}"
                                                     name="price"
                                                     class="form-control"
                                                     value="{{ product.price }}"
+                                                    step="0.01"
+                                                    min="0"
                                                     required
                                                 >
                                             </div>
@@ -211,6 +212,24 @@
                                                         </option>
                                                     {% endfor %}
                                                 </select>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label
+                                                    for="edit_product_media_{{ product.id }}"
+                                                    class="form-label"
+                                                >
+                                                    Add more images or videos
+                                                </label>
+
+                                                <input
+                                                    type="file"
+                                                    id="edit_product_media_{{ product.id }}"
+                                                    name="media_files"
+                                                    class="form-control"
+                                                    accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm,video/quicktime"
+                                                    multiple
+                                                >
                                             </div>
 
                                             {% if product.media %}
@@ -252,24 +271,6 @@
                                                 </div>
                                             {% endif %}
 
-                                            <div class="col-md-6">
-                                                <label
-                                                    for="edit_product_media_{{ product.id }}"
-                                                    class="form-label"
-                                                >
-                                                    Add more images or videos
-                                                </label>
-
-                                                <input
-                                                    type="file"
-                                                    id="edit_product_media_{{ product.id }}"
-                                                    name="media_files"
-                                                    class="form-control"
-                                                    accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm,video/quicktime"
-                                                    multiple
-                                                >
-                                            </div>
-
                                             <div class="col-12">
                                                 <label
                                                     for="edit_product_description_{{ product.id }}"
@@ -306,6 +307,7 @@
                                         </button>
                                     </div>
                                 </form>
+
                                 {% for media in product.media %}
                                     <form
                                         id="deleteMediaForm{{ media.id }}"
@@ -387,6 +389,71 @@
                     </div>
                 {% endfor %}
             </section>
+
+            <section class="admin-section">
+                <div class="admin-section-header">
+                    <div>
+                        <p class="eyebrow-text">Category management</p>
+                        <h2>Manage categories</h2>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn btn-dark"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addCategoryModal"
+                    >
+                        Add Category
+                    </button>
+                </div>
+
+                <div class="admin-table-wrapper">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Products</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for category in categories %}
+                                <tr>
+                                    <td>{{ category.name }}</td>
+                                    <td>{{ category.products|length }}</td>
+
+                                    <td class="text-end">
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-outline-dark"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editCategoryModal{{ category.id }}"
+                                        >
+                                            Edit
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-outline-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteCategoryModal{{ category.id }}"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-center">
+                                        No categories have been added yet.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </div>
     </main>
 
@@ -441,6 +508,7 @@
                                     id="product_name"
                                     name="name"
                                     class="form-control"
+                                    maxlength="150"
                                     placeholder="Enter product name"
                                     required
                                 >
@@ -456,11 +524,11 @@
 
                                 <input
                                     type="number"
-                                    step="0.01"
-                                    min="0"
                                     id="product_price"
                                     name="price"
                                     class="form-control"
+                                    step="0.01"
+                                    min="0"
                                     placeholder="Enter price"
                                     required
                                 >
@@ -546,4 +614,242 @@
             </div>
         </div>
     </div>
+
+    <div
+        class="modal fade"
+        id="addCategoryModal"
+        tabindex="-1"
+        aria-labelledby="addCategoryModalLabel"
+        aria-hidden="true"
+    >
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <p class="eyebrow-text mb-1">
+                            Category management
+                        </p>
+
+                        <h2
+                            class="modal-title"
+                            id="addCategoryModalLabel"
+                        >
+                            Add category
+                        </h2>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                    ></button>
+                </div>
+
+                <form
+                    method="POST"
+                    action="{{ url_for('admin_add_category') }}"
+                >
+                    <div class="modal-body">
+                        <label
+                            for="category_name"
+                            class="form-label"
+                        >
+                            Category name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="category_name"
+                            name="name"
+                            class="form-control"
+                            maxlength="80"
+                            placeholder="Enter category name"
+                            required
+                        >
+                    </div>
+
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-outline-dark"
+                            data-bs-dismiss="modal"
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="btn btn-dark"
+                        >
+                            Save Category
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% for category in categories %}
+        <div
+            class="modal fade"
+            id="editCategoryModal{{ category.id }}"
+            tabindex="-1"
+            aria-labelledby="editCategoryModalLabel{{ category.id }}"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div>
+                            <p class="eyebrow-text mb-1">
+                                Category management
+                            </p>
+
+                            <h2
+                                class="modal-title"
+                                id="editCategoryModalLabel{{ category.id }}"
+                            >
+                                Edit category
+                            </h2>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('admin_edit_category', category_id=category.id) }}"
+                    >
+                        <div class="modal-body">
+                            <label
+                                for="edit_category_name_{{ category.id }}"
+                                class="form-label"
+                            >
+                                Category name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="edit_category_name_{{ category.id }}"
+                                name="name"
+                                class="form-control"
+                                value="{{ category.name }}"
+                                maxlength="80"
+                                required
+                            >
+                        </div>
+
+                        <div class="modal-footer">
+                            <button
+                                type="button"
+                                class="btn btn-outline-dark"
+                                data-bs-dismiss="modal"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                type="submit"
+                                class="btn btn-dark"
+                            >
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    {% for category in categories %}
+        <div
+            class="modal fade"
+            id="deleteCategoryModal{{ category.id }}"
+            tabindex="-1"
+            aria-labelledby="deleteCategoryModalLabel{{ category.id }}"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div>
+                            <p class="eyebrow-text mb-1">
+                                Category management
+                            </p>
+
+                            <h2
+                                class="modal-title"
+                                id="deleteCategoryModalLabel{{ category.id }}"
+                            >
+                                Delete category
+                            </h2>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+
+                    <div class="modal-body">
+                        {% if category.products %}
+                            <p>
+                                <strong>{{ category.name }}</strong>
+                                cannot be deleted because
+                                {{ category.products|length }}
+                                product{% if category.products|length != 1 %}s{% endif %}
+                                currently use this category.
+                            </p>
+
+                            <p class="text-muted mb-0">
+                                Move or delete those products before deleting this category.
+                            </p>
+                        {% else %}
+                            <p>
+                                Are you sure you want to delete
+                                <strong>{{ category.name }}</strong>?
+                            </p>
+
+                            <p class="text-muted mb-0">
+                                This action cannot be undone.
+                            </p>
+                        {% endif %}
+                    </div>
+
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-outline-dark"
+                            data-bs-dismiss="modal"
+                        >
+                            Cancel
+                        </button>
+
+                        {% if not category.products %}
+                            <form
+                                method="POST"
+                                action="{{ url_for('admin_delete_category', category_id=category.id) }}"
+                            >
+                                <button
+                                    type="submit"
+                                    class="btn btn-danger"
+                                >
+                                    Delete Category
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
 {% endblock %}
+
