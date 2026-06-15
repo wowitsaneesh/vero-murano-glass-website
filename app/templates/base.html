@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vero Murano Glass</title>
 
+    <script>
+        (() => {
+            const savedTheme = localStorage.getItem("veroTheme");
+
+            const preferredTheme = window.matchMedia(
+                "(prefers-color-scheme: dark)"
+            ).matches
+                ? "dark"
+                : "light";
+
+            document.documentElement.dataset.theme =
+                savedTheme || preferredTheme;
+        })();
+    </script>
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,7 +54,39 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Cart</a>
+                        <button
+                            type="button"
+                            class="nav-link border-0 bg-transparent"
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#cartOffcanvas"
+                            aria-controls="cartOffcanvas"
+                        >
+                            Cart
+
+                            <span
+                                id="navbarCartCount"
+                                class="cart-count-badge {% if cart_count == 0 %}d-none{% endif %}"
+                            >
+                                {{ cart_count }}
+                            </span>
+                        </button>
+                    </li>
+
+                    <li class="nav-item">
+                        <button
+                            type="button"
+                            id="themeToggleButton"
+                            class="theme-toggle-button"
+                            aria-label="Switch colour theme"
+                            title="Switch colour theme"
+                        >
+                            <span
+                                id="themeToggleIcon"
+                                aria-hidden="true"
+                            >
+                                ☾
+                            </span>
+                        </button>
                     </li>
 
                     {% if session.get("user_id") %}
@@ -87,6 +134,138 @@
     </div>
 
     {% block content %}{% endblock %}
+
+        <div
+            class="offcanvas offcanvas-end cart-offcanvas"
+            tabindex="-1"
+            id="cartOffcanvas"
+            aria-labelledby="cartOffcanvasLabel"
+        >
+            <div class="offcanvas-header">
+                <div>
+                    <p class="eyebrow-text mb-1">Your selection</p>
+                    <h2 id="cartOffcanvasLabel">Shopping cart</h2>
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="offcanvas"
+                    aria-label="Close"
+                ></button>
+            </div>
+
+            <div class="offcanvas-body">
+                <div
+                    id="cartSidebarItems"
+                    class="{% if not navbar_cart['items'] %}d-none{% endif %}"
+                >
+                    {% for item in navbar_cart["items"] %}
+                        <article
+                            class="sidebar-cart-item"
+                            id="sidebarCartItem{{ item.product.id }}"
+                        >
+                            <div class="sidebar-cart-image">
+                                {% if item.image %}
+                                    <img
+                                        src="{{ url_for('static', filename='uploads/products/' ~ item.image.filename) }}"
+                                        alt="{{ item.product.name }}"
+                                    >
+                                {% else %}
+                                    <div class="product-image-placeholder"></div>
+                                {% endif %}
+                            </div>
+
+                            <div class="sidebar-cart-details">
+                                <h3>{{ item.product.name }}</h3>
+
+                                <p>
+                                    ${{ "%.2f"|format(item.product.price) }} each
+                                </p>
+
+                                <div class="sidebar-quantity-control">
+                                    <button
+                                        type="button"
+                                        class="quantity-button"
+                                        data-product-id="{{ item.product.id }}"
+                                        data-change="-1"
+                                        aria-label="Decrease quantity"
+                                    >
+                                        −
+                                    </button>
+
+                                    <span id="cartQuantity{{ item.product.id }}">
+                                        {{ item.quantity }}
+                                    </span>
+
+                                    <button
+                                        type="button"
+                                        class="quantity-button"
+                                        data-product-id="{{ item.product.id }}"
+                                        data-change="1"
+                                        aria-label="Increase quantity"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                            </div>
+
+                            <strong id="cartLineTotal{{ item.product.id }}">
+                                ${{ "%.2f"|format(item.line_total) }}
+                            </strong>
+                        </article>
+                    {% endfor %}
+
+                    <div class="sidebar-cart-summary">
+                        <div>
+                            <span>Subtotal</span>
+                            <strong id="sidebarCartSubtotal">
+                                ${{ "%.2f"|format(navbar_cart["subtotal"]) }}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>GST (10%)</span>
+                            <strong id="sidebarCartGst">
+                                ${{ "%.2f"|format(navbar_cart["gst"]) }}
+                            </strong>
+                        </div>
+
+                        <div class="sidebar-cart-total">
+                            <span>Total payable</span>
+                            <strong id="sidebarCartTotal">
+                                ${{ "%.2f"|format(navbar_cart["total"]) }}
+                            </strong>
+                        </div>
+
+                        <a
+                            href="{{ url_for('checkout_enquiry') }}"
+                            class="btn btn-dark w-100"
+                        >
+                            Place Order Enquiry
+                        </a>
+                    </div>
+                </div>
+
+                <div
+                    id="emptySidebarCart"
+                    class="empty-sidebar-cart {% if navbar_cart['items'] %}d-none{% endif %}"
+                >
+                    <h3>Your cart is empty</h3>
+
+                    <p>
+                        Add products from the collection to begin your enquiry.
+                    </p>
+
+                    <a
+                        href="{{ url_for('products') }}"
+                        class="btn btn-dark"
+                    >
+                        Browse Products
+                    </a>
+                </div>
+            </div>
+        </div>
 
     <footer class="site-footer">
         <div class="container">

@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <main class="cart-page">
+        <div class="container">
+            <div class="cart-header">
+                <p class="eyebrow-text">Your selection</p>
+                <h1>Shopping cart</h1>
+            </div>
+
+            {% if cart["items"] %}
+                <div class="cart-layout">
+                    <section class="cart-items">
+                        {% for item in cart["items"] %}
+                            <article class="cart-item">
+                                <div class="cart-item-media">
+                                    {% if item.image %}
+                                        <img
+                                            src="{{ url_for('static', filename='uploads/products/' ~ item.image.filename) }}"
+                                            alt="{{ item.product.name }}"
+                                        >
+                                    {% else %}
+                                        <div class="product-image-placeholder"></div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="cart-item-details">
+                                    <p class="product-card-category">
+                                        {{ item.product.category.name }}
+                                    </p>
+
+                                    <h2>{{ item.product.name }}</h2>
+
+                                    <p class="cart-item-price">
+                                        ${{ "%.2f"|format(item.product.price) }} each
+                                    </p>
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('update_cart', product_id=item.product.id) }}"
+                                        class="cart-quantity-form"
+                                    >
+                                        <label for="quantity_{{ item.product.id }}">
+                                            Quantity
+                                        </label>
+
+                                        <input
+                                            type="number"
+                                            id="quantity_{{ item.product.id }}"
+                                            name="quantity"
+                                            value="{{ item.quantity }}"
+                                            min="0"
+                                            max="99"
+                                            class="form-control"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-outline-dark btn-sm"
+                                        >
+                                            Update
+                                        </button>
+                                    </form>
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('remove_from_cart', product_id=item.product.id) }}"
+                                    >
+                                        <button
+                                            type="submit"
+                                            class="btn btn-link text-danger p-0"
+                                        >
+                                            Remove
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <div class="cart-item-total">
+                                    ${{ "%.2f"|format(item.line_total) }}
+                                </div>
+                            </article>
+                        {% endfor %}
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('clear_cart') }}"
+                        >
+                            <button
+                                type="submit"
+                                class="btn btn-outline-danger"
+                            >
+                                Clear Cart
+                            </button>
+                        </form>
+                    </section>
+
+                    <aside class="cart-summary">
+                        <p class="eyebrow-text">Order summary</p>
+                        <h2>Total payable</h2>
+
+                        <div class="cart-summary-row">
+                            <span>Subtotal</span>
+                            <strong>
+                                ${{ "%.2f"|format(cart["subtotal"]) }}
+                            </strong>
+                        </div>
+
+                        <div class="cart-summary-row">
+                            <span>GST (10%)</span>
+                            <strong>
+                                ${{ "%.2f"|format(cart["gst"]) }}
+                            </strong>
+                        </div>
+
+                        <div class="cart-summary-row cart-summary-total">
+                            <span>Total</span>
+                            <strong>
+                                ${{ "%.2f"|format(cart["total"]) }}
+                            </strong>
+                        </div>
+
+                        <a
+                            href="#"
+                            class="btn btn-dark w-100"
+                        >
+                            Place Order Enquiry
+                        </a>
+
+                        <p class="cart-summary-note">
+                            No payment will be taken online. Andrea will contact you to confirm the order.
+                        </p>
+                    </aside>
+                </div>
+            {% else %}
+                <div class="empty-cart">
+                    <h2>Your cart is empty</h2>
+
+                    <p>
+                        Browse the collection and add products to begin an order enquiry.
+                    </p>
+
+                    <a
+                        href="{{ url_for('products') }}"
+                        class="btn btn-dark"
+                    >
+                        Browse Products
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

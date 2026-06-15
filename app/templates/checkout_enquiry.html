@@ -1,0 +1,405 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% set has_saved_details =
+        user
+        and user.phone
+        and user.street_address
+        and user.suburb
+        and user.state
+        and user.postcode
+    %}
+
+    <main class="checkout-page">
+        <div class="container">
+            <div class="checkout-header">
+                <p class="eyebrow-text">Order enquiry</p>
+
+                <h1>Complete your details</h1>
+
+                <p>
+                    No online payment will be taken. Andrea will contact you
+                    after receiving your enquiry.
+                </p>
+            </div>
+
+            <div class="checkout-layout">
+                <section class="checkout-form-card">
+                    <form
+                        method="POST"
+                        action="{{ url_for('checkout_enquiry') }}"
+                    >
+                        {% if has_saved_details %}
+                            <div
+                                id="savedCheckoutDetails"
+                                class="saved-checkout-details"
+                            >
+                                <div class="saved-checkout-heading">
+                                    <div>
+                                        <p class="eyebrow-text">
+                                            Saved details
+                                        </p>
+
+                                        <h2>
+                                            Using your saved profile
+                                        </h2>
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        id="editCheckoutDetailsButton"
+                                        class="btn btn-outline-dark btn-sm"
+                                    >
+                                        Use a different address
+                                    </button>
+                                </div>
+
+                                <div class="saved-checkout-grid">
+                                    <div>
+                                        <span>Customer</span>
+
+                                        <strong>
+                                            {{ user.name }}
+                                        </strong>
+
+                                        <p>{{ user.email }}</p>
+                                        <p>{{ user.phone }}</p>
+                                    </div>
+
+                                    <div>
+                                        <span>Shipping address</span>
+
+                                        <strong>
+                                            {{ user.street_address }}
+                                        </strong>
+
+                                        {% if user.address_line_2 %}
+                                            <p>{{ user.address_line_2 }}</p>
+                                        {% endif %}
+
+                                        <p>
+                                            {{ user.suburb }}
+                                            {{ user.state }}
+                                            {{ user.postcode }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div
+                            id="checkoutDetailsFields"
+                            class="{% if has_saved_details %}d-none{% endif %}"
+                        >
+                            {% if has_saved_details %}
+                                <div class="checkout-edit-heading">
+                                    <h2>Edit enquiry details</h2>
+
+                                    <button
+                                        type="button"
+                                        id="cancelCheckoutEditButton"
+                                        class="use-saved-details-button"
+                                    >
+                                        <span>←</span>
+                                        Use saved details
+                                    </button>
+                                </div>
+                            {% endif %}
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label
+                                        for="customer_name"
+                                        class="form-label"
+                                    >
+                                        Full name
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="customer_name"
+                                        name="customer_name"
+                                        class="form-control"
+                                        value="{{ form_data.get(
+                                            'customer_name',
+                                            user.name if user else ''
+                                        ) }}"
+                                        autocomplete="name"
+                                        required
+                                    >
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label
+                                        for="email"
+                                        class="form-label"
+                                    >
+                                        Email
+                                    </label>
+
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        class="form-control {% if user %}account-readonly-field{% endif %}"
+                                        value="{{ form_data.get(
+                                            'email',
+                                            user.email if user else ''
+                                        ) }}"
+                                        autocomplete="email"
+                                        {% if user %}readonly{% endif %}
+                                        required
+                                    >
+
+                                    {% if user %}
+                                        <small class="account-field-note">
+                                            Your login email cannot be changed.
+                                        </small>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-12">
+                                    <label
+                                        for="phone"
+                                        class="form-label"
+                                    >
+                                        Phone number
+                                    </label>
+
+                                    <input
+                                        type="tel"
+                                        id="phone"
+                                        name="phone"
+                                        class="form-control"
+                                        value="{{ form_data.get(
+                                            'phone',
+                                            user.phone if user and user.phone else ''
+                                        ) }}"
+                                        autocomplete="tel"
+                                        required
+                                    >
+                                </div>
+
+                                <div class="col-12">
+                                    <label
+                                        for="street_address"
+                                        class="form-label"
+                                    >
+                                        Street address
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="street_address"
+                                        name="street_address"
+                                        class="form-control"
+                                        value="{{ form_data.get(
+                                            'street_address',
+                                            user.street_address
+                                            if user and user.street_address
+                                            else ''
+                                        ) }}"
+                                        placeholder="For example: 10 Hay Street"
+                                        autocomplete="address-line1"
+                                        required
+                                    >
+                                </div>
+
+                                <div class="col-12">
+                                    <label
+                                        for="address_line_2"
+                                        class="form-label"
+                                    >
+                                        Apartment, unit or building
+                                        <span class="text-muted">
+                                            (optional)
+                                        </span>
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="address_line_2"
+                                        name="address_line_2"
+                                        class="form-control"
+                                        value="{{ form_data.get(
+                                            'address_line_2',
+                                            user.address_line_2
+                                            if user and user.address_line_2
+                                            else ''
+                                        ) }}"
+                                        autocomplete="address-line2"
+                                    >
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label
+                                        for="postcode"
+                                        class="form-label"
+                                    >
+                                        Postcode
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="postcode"
+                                        name="postcode"
+                                        class="form-control"
+                                        value="{{ form_data.get(
+                                            'postcode',
+                                            user.postcode
+                                            if user and user.postcode
+                                            else ''
+                                        ) }}"
+                                        inputmode="numeric"
+                                        pattern="[0-9]{4}"
+                                        maxlength="4"
+                                        autocomplete="postal-code"
+                                        required
+                                    >
+
+                                    <small
+                                        id="postcodeStatus"
+                                        class="postcode-status"
+                                    ></small>
+                                </div>
+
+                                <div class="col-md-5">
+                                    <label
+                                        for="suburb"
+                                        class="form-label"
+                                    >
+                                        Suburb
+                                    </label>
+
+                                    <select
+                                        id="suburb"
+                                        name="suburb"
+                                        class="form-select"
+                                        data-selected-suburb="{{ form_data.get(
+                                            'suburb',
+                                            user.suburb
+                                            if user and user.suburb
+                                            else ''
+                                        ) }}"
+                                        autocomplete="address-level2"
+                                        required
+                                    >
+                                        {% if user and user.suburb %}
+                                            <option
+                                                value="{{ user.suburb }}"
+                                                selected
+                                            >
+                                                {{ user.suburb }}
+                                            </option>
+                                        {% else %}
+                                            <option value="">
+                                                Enter your postcode first
+                                            </option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label
+                                        for="state"
+                                        class="form-label"
+                                    >
+                                        State
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="state"
+                                        name="state"
+                                        class="form-control"
+                                        value="{{ form_data.get(
+                                            'state',
+                                            user.state
+                                            if user and user.state
+                                            else ''
+                                        ) }}"
+                                        autocomplete="address-level1"
+                                        readonly
+                                        required
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checkout-message-field">
+                            <label
+                                for="message"
+                                class="form-label"
+                            >
+                                Message to Andrea
+                            </label>
+
+                            <textarea
+                                id="message"
+                                name="message"
+                                class="form-control"
+                                rows="4"
+                                placeholder="Optional questions or delivery instructions"
+                            >{{ form_data.get('message', '') }}</textarea>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn btn-dark checkout-submit-button"
+                        >
+                            Submit Order Enquiry
+                        </button>
+                    </form>
+                </section>
+
+                <aside class="checkout-summary">
+                    <p class="eyebrow-text">
+                        Order summary
+                    </p>
+
+                    {% for item in cart["items"] %}
+                        <div class="checkout-summary-item">
+                            <div>
+                                <strong>
+                                    {{ item.product.name }}
+                                </strong>
+
+                                <small>
+                                    Quantity: {{ item.quantity }}
+                                </small>
+                            </div>
+
+                            <strong>
+                                ${{ "%.2f"|format(item.line_total) }}
+                            </strong>
+                        </div>
+                    {% endfor %}
+
+                    <div class="checkout-summary-row">
+                        <span>Subtotal</span>
+
+                        <strong>
+                            ${{ "%.2f"|format(cart["subtotal"]) }}
+                        </strong>
+                    </div>
+
+                    <div class="checkout-summary-row">
+                        <span>GST</span>
+
+                        <strong>
+                            ${{ "%.2f"|format(cart["gst"]) }}
+                        </strong>
+                    </div>
+
+                    <div class="checkout-summary-row checkout-summary-total">
+                        <span>Total payable</span>
+
+                        <strong>
+                            ${{ "%.2f"|format(cart["total"]) }}
+                        </strong>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+{% endblock %}
