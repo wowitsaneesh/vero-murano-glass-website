@@ -140,9 +140,14 @@ def is_valid_password(password):
 
     return True
 
-@app.route('/')
+@app.route("/")
 def home():
-    return render_template('home.html')
+    categories = Category.query.order_by(Category.name).all()
+
+    return render_template(
+        "home.html",
+        categories=categories
+    )
 
 @app.route('/products')
 def products():
@@ -325,6 +330,108 @@ def admin_delete_media(media_id):
 
     db.session.delete(media)
     db.session.commit()
+
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/categories/add", methods=["POST"])
+def admin_add_category():
+    if session.get("user_role") != "admin":
+        return redirect(url_for("login"))
+
+    name = request.form.get("name", "").strip()
+
+    if not name:
+        flash("Category name is required.", "danger")
+        return redirect(url_for("admin_dashboard"))
+
+    if len(name) > 80:
+        flash("Category name cannot exceed 80 characters.", "danger")
+        return redirect(url_for("admin_dashboard"))
+
+    existing_category = Category.query.filter(
+        db.func.lower(Category.name) == name.lower()
+    ).first()
+
+    if existing_category:
+        flash("A category with this name already exists.", "danger")
+        return redirect(url_for("admin_dashboard"))
+
+    try:
+        new_category = Category(name=name)
+
+        db.session.add(new_category)
+        db.session.commit()
+
+        flash("Category added successfully.", "success")
+
+    except Exception:
+        db.session.rollback()
+        flash("The category could not be added.", "danger")
+
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/admin/categories/<int:category_id>/edit", methods=["POST"])
+def admin_edit_category(category_id):
+    if session.get("user_role") != "admin":
+        return redirect(url_for("login"))
+
+    category = Category.query.get_or_404(category_id)
+    name = request.form.get("name", "").strip()
+
+    if not name:
+        flash("Category name is required.", "danger")
+        return redirect(url_for("admin_dashboard"))
+
+    if len(name) > 80:
+        flash("Category name cannot exceed 80 characters.", "danger")
+        return redirect(url_for("admin_dashboard"))
+
+    existing_category = Category.query.filter(
+        db.func.lower(Category.name) == name.lower(),
+        Category.id != category.id
+    ).first()
+
+    if existing_category:
+        flash("A category with this name already exists.", "danger")
+        return redirect(url_for("admin_dashboard"))
+
+    try:
+        category.name = name
+        db.session.commit()
+
+        flash("Category updated successfully.", "success")
+
+    except Exception:
+        db.session.rollback()
+        flash("The category could not be updated.", "danger")
+
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/admin/categories/<int:category_id>/delete", methods=["POST"])
+def admin_delete_category(category_id):
+    if session.get("user_role") != "admin":
+        return redirect(url_for("login"))
+
+    category = Category.query.get_or_404(category_id)
+
+    if category.products:
+        flash(
+            "This category cannot be deleted because products are using it.",
+            "danger"
+        )
+        return redirect(url_for("admin_dashboard"))
+
+    try:
+        db.session.delete(category)
+        db.session.commit()
+
+        flash("Category deleted successfully.", "success")
+
+    except Exception:
+        db.session.rollback()
+        flash("The category could not be deleted.", "danger")
 
     return redirect(url_for("admin_dashboard"))
 
