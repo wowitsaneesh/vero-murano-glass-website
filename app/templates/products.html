@@ -8,12 +8,14 @@
 
                 {% if selected_category %}
                     <h1>{{ selected_category }}</h1>
+
                     <p>
                         Browse handcrafted pieces in the
                         {{ selected_category }} category.
                     </p>
                 {% else %}
                     <h1>Explore the collection</h1>
+
                     <p>
                         Browse handcrafted Murano-inspired jewellery
                         and glass accessories.
@@ -29,6 +31,14 @@
                     %}
 
                     <div class="product-card">
+                        <a
+                            href="{{ url_for(
+                                'product_detail',
+                                product_id=product.id
+                            ) }}"
+                            class="product-card-overlay-link"
+                            aria-label="View {{ product.name }}"
+                        ></a>
                         {% if product_images %}
                             <img
                                 src="{{ url_for(
@@ -58,15 +68,32 @@
                                     ${{ "%.2f"|format(product.price) }}
                                 </p>
 
-                                <a
-                                    href="{{ url_for(
-                                        'product_detail',
-                                        product_id=product.id
-                                    ) }}"
-                                    class="product-link stretched-link"
-                                >
-                                    View Details
-                                </a>
+                                <div class="product-card-actions">
+                                    <a
+                                        href="{{ url_for(
+                                            'product_detail',
+                                            product_id=product.id
+                                        ) }}"
+                                        class="product-link product-card-action-link"
+                                    >
+                                        View Details
+                                    </a>
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'add_to_cart',
+                                            product_id=product.id
+                                        ) }}"
+                                    >
+                                        <button
+                                            type="submit"
+                                            class="btn btn-dark btn-sm product-card-cart-button"
+                                        >
+                                            Add to Cart
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -74,6 +101,107 @@
                     <p>No products are available yet.</p>
                 {% endfor %}
             </div>
+
+            {% if pagination.pages > 1 %}
+                <nav
+                    class="product-pagination"
+                    aria-label="Product pages"
+                >
+                    {% if pagination.has_prev %}
+                        {% if selected_category %}
+                            <a
+                                href="{{ url_for(
+                                    'products_by_category',
+                                    category_name=selected_category,
+                                    page=pagination.prev_num
+                                ) }}"
+                                class="product-page-link"
+                                aria-label="Previous page"
+                            >
+                                ‹
+                            </a>
+                        {% else %}
+                            <a
+                                href="{{ url_for(
+                                    'products',
+                                    page=pagination.prev_num
+                                ) }}"
+                                class="product-page-link"
+                                aria-label="Previous page"
+                            >
+                                ‹
+                            </a>
+                        {% endif %}
+                    {% endif %}
+
+                    {% for page_number in pagination.iter_pages(
+                        left_edge=1,
+                        right_edge=1,
+                        left_current=1,
+                        right_current=1
+                    ) %}
+                        {% if page_number %}
+                            {% if page_number == pagination.page %}
+                                <span class="product-page-link active">
+                                    {{ page_number }}
+                                </span>
+                            {% elif selected_category %}
+                                <a
+                                    href="{{ url_for(
+                                        'products_by_category',
+                                        category_name=selected_category,
+                                        page=page_number
+                                    ) }}"
+                                    class="product-page-link"
+                                >
+                                    {{ page_number }}
+                                </a>
+                            {% else %}
+                                <a
+                                    href="{{ url_for(
+                                        'products',
+                                        page=page_number
+                                    ) }}"
+                                    class="product-page-link"
+                                >
+                                    {{ page_number }}
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <span class="product-page-dots">
+                                …
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if pagination.has_next %}
+                        {% if selected_category %}
+                            <a
+                                href="{{ url_for(
+                                    'products_by_category',
+                                    category_name=selected_category,
+                                    page=pagination.next_num
+                                ) }}"
+                                class="product-page-link"
+                                aria-label="Next page"
+                            >
+                                ›
+                            </a>
+                        {% else %}
+                            <a
+                                href="{{ url_for(
+                                    'products',
+                                    page=pagination.next_num
+                                ) }}"
+                                class="product-page-link"
+                                aria-label="Next page"
+                            >
+                                ›
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                </nav>
+            {% endif %}
         </div>
     </main>
 {% endblock %}

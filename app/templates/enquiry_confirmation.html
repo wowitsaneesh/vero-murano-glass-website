@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <main class="confirmation-page">
+        <div class="container">
+            <section class="confirmation-card">
+                <p class="eyebrow-text">Enquiry submitted</p>
+
+                <h1>Thank you, {{ order.customer_name }}.</h1>
+
+                <p>
+                    Your order enquiry reference is
+                    <strong>#{{ order.id }}</strong>.
+                </p>
+
+                {% if email_sent %}
+                    <p>
+                        A confirmation email has been sent to
+                        <strong>{{ order.email }}</strong>.
+                    </p>
+                {% else %}
+                    <div class="alert alert-warning">
+                        Your enquiry was saved, but the confirmation email
+                        could not be sent. Andrea can still view your enquiry.
+                    </div>
+                {% endif %}
+
+                <p>
+                    Andrea will contact you to confirm availability,
+                    shipping, and payment arrangements.
+                </p>
+
+                <a
+                    href="{{ url_for('products') }}"
+                    class="btn btn-dark"
+                >
+                    Continue Shopping
+                </a>
+            </section>
+        </div>
+    </main>
+{% endblock %}

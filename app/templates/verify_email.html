@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <main class="auth-page">
+        <div class="container">
+            <section class="otp-verification-card">
+                <p class="eyebrow-text">
+                    Email verification
+                </p>
+
+                <h1>Enter your code</h1>
+
+                <p class="otp-verification-intro">
+                    We sent a four-digit verification code to
+                    <strong>{{ email }}</strong>.
+                </p>
+
+                {% if error %}
+                    <div class="alert alert-danger">
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+                <form
+                    method="POST"
+                    action="{{ url_for('verify_email') }}"
+                    class="otp-verification-form"
+                    id="otpVerificationForm"
+                >
+                    <label class="form-label">
+                        Verification code
+                    </label>
+
+                    <div class="otp-boxes">
+                        <input
+                            type="text"
+                            class="otp-box"
+                            inputmode="numeric"
+                            maxlength="1"
+                            autocomplete="one-time-code"
+                            aria-label="First digit"
+                            autofocus
+                        >
+
+                        <input
+                            type="text"
+                            class="otp-box"
+                            inputmode="numeric"
+                            maxlength="1"
+                            aria-label="Second digit"
+                        >
+
+                        <input
+                            type="text"
+                            class="otp-box"
+                            inputmode="numeric"
+                            maxlength="1"
+                            aria-label="Third digit"
+                        >
+
+                        <input
+                            type="text"
+                            class="otp-box"
+                            inputmode="numeric"
+                            maxlength="1"
+                            aria-label="Fourth digit"
+                        >
+                    </div>
+
+                    <input
+                        type="hidden"
+                        id="otp"
+                        name="otp"
+                    >
+
+                    <button
+                        type="submit"
+                        class="btn btn-dark"
+                    >
+                        Verify Email
+                    </button>
+                </form>
+
+                <div class="otp-resend-section">
+                    <p>
+                        Did not receive the code?
+                    </p>
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'resend_verification_code'
+                        ) }}"
+                    >
+                        <button
+                            type="submit"
+                            class="otp-resend-button"
+                        >
+                            Send another code
+                        </button>
+                    </form>
+                </div>
+
+                <p class="otp-expiry-note">
+                    The code expires after 10 minutes.
+                </p>
+            </section>
+        </div>
+    </main>
+{% endblock %}
