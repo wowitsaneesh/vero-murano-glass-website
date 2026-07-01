@@ -13,7 +13,7 @@
                             <div class="carousel-item {% if loop.first %}active{% endif %}">
                                 {% if media.media_type == "image" %}
                                     <img
-                                        src="{{ url_for('static', filename='uploads/products/' ~ media.filename) }}"
+                                        src="{{ media.url }}"
                                         alt="{{ product.name }}"
                                         class="product-carousel-media"
                                     >
@@ -23,7 +23,7 @@
                                         controls
                                     >
                                         <source
-                                            src="{{ url_for('static', filename='uploads/products/' ~ media.filename) }}"
+                                            src="{{ media.url }}"
                                         >
                                         Your browser does not support video playback.
                                     </video>

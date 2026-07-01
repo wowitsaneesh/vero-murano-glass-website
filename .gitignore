@@ -18,3 +18,8 @@ instance/
 
 # VS Code
 .vscode/
+
+# Vercel
+public/
+node_modules/
+.vercel/

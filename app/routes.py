@@ -7,6 +7,11 @@ import urllib.error
 import urllib.request
 import html
 import secrets
+import hmac
+import hashlib
+import time
+
+import vercel_blob
 
 from email.message import EmailMessage
 from datetime import datetime, timedelta
@@ -120,6 +125,8 @@ def validate_media_files(media_files):
 
 
 def save_product_media(media_files, product_id):
+    using_blob_storage = bool(os.environ.get("BLOB_READ_WRITE_TOKEN"))
+
     for media_file in media_files:
         if not media_file or not media_file.filename:
             continue
@@ -132,20 +139,70 @@ def save_product_media(media_files, product_id):
         original_filename = secure_filename(media_file.filename)
         unique_filename = f"{uuid.uuid4().hex}_{original_filename}"
 
-        file_path = os.path.join(
-            app.config["UPLOAD_FOLDER"],
-            unique_filename
-        )
+        if using_blob_storage:
+            blob = vercel_blob.put(
+                unique_filename,
+                media_file.read()
+            )
+            stored_filename = blob["url"]
+        else:
+            file_path = os.path.join(
+                app.config["UPLOAD_FOLDER"],
+                unique_filename
+            )
 
-        media_file.save(file_path)
+            media_file.save(file_path)
+            stored_filename = unique_filename
 
         product_media = ProductMedia(
-            filename=unique_filename,
+            filename=stored_filename,
             media_type=media_type,
             product_id=product_id
         )
 
         db.session.add(product_media)
+
+
+def save_video_urls(video_urls, product_id):
+    for video_url in video_urls:
+        video_url = video_url.strip()
+
+        if not video_url:
+            continue
+
+        product_media = ProductMedia(
+            filename=video_url,
+            media_type="video",
+            product_id=product_id
+        )
+
+        db.session.add(product_media)
+
+
+def delete_media_file(media):
+    if media.filename.startswith("http://") or media.filename.startswith("https://"):
+        vercel_blob.delete([media.filename])
+        return
+
+    file_path = os.path.join(
+        app.config["UPLOAD_FOLDER"],
+        media.filename
+    )
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+
+def generate_upload_token():
+    expires_at = str(int(time.time()) + 300)
+
+    signature = hmac.new(
+        app.config["SECRET_KEY"].encode(),
+        expires_at.encode(),
+        hashlib.sha256
+    ).hexdigest()
+
+    return f"{expires_at}.{signature}"
 
 def is_valid_password(password):
     if len(password) < 8:
@@ -1808,7 +1865,8 @@ def admin_dashboard():
         product_pagination=product_pagination,
         categories=categories,
         orders=orders,
-        order_pagination=order_pagination
+        order_pagination=order_pagination,
+        using_blob_storage=bool(os.environ.get("BLOB_READ_WRITE_TOKEN"))
     )
 
 @app.route("/admin/products/add", methods=["POST"])
@@ -1841,6 +1899,10 @@ def admin_add_product():
         db.session.flush()
 
         save_product_media(media_files, new_product.id)
+        save_video_urls(
+            request.form.getlist("video_urls"),
+            new_product.id
+        )
 
         db.session.commit()
 
@@ -1879,6 +1941,10 @@ def admin_edit_product(product_id):
         product.category_id = product_data["category_id"]
 
         save_product_media(media_files, product.id)
+        save_video_urls(
+            request.form.getlist("video_urls"),
+            product.id
+        )
 
         db.session.commit()
 
@@ -1898,13 +1964,7 @@ def admin_delete_product(product_id):
     product = Product.query.get_or_404(product_id)
 
     for media in product.media:
-        file_path = os.path.join(
-            app.config["UPLOAD_FOLDER"],
-            media.filename
-        )
-
-        if os.path.exists(file_path):
-            os.remove(file_path)
+        delete_media_file(media)
 
     db.session.delete(product)
     db.session.commit()
@@ -1918,18 +1978,19 @@ def admin_delete_media(media_id):
 
     media = ProductMedia.query.get_or_404(media_id)
 
-    file_path = os.path.join(
-        app.config["UPLOAD_FOLDER"],
-        media.filename
-    )
-
-    if os.path.exists(file_path):
-        os.remove(file_path)
+    delete_media_file(media)
 
     db.session.delete(media)
     db.session.commit()
 
     return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/media/upload-token", methods=["POST"])
+def admin_media_upload_token():
+    if session.get("user_role") != "admin":
+        return jsonify({"error": "Not authorized."}), 403
+
+    return jsonify({"token": generate_upload_token()})
 
 @app.route("/admin/categories/add", methods=["POST"])
 def admin_add_category():

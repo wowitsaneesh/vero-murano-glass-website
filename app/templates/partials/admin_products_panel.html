@@ -246,7 +246,7 @@
                                             <div class="existing-media-item">
                                                 {% if media.media_type == "image" %}
                                                     <img
-                                                        src="{{ url_for('static', filename='uploads/products/' ~ media.filename) }}"
+                                                        src="{{ media.url }}"
                                                         alt="{{ product.name }}"
                                                         class="existing-media-preview"
                                                     >
@@ -256,7 +256,7 @@
                                                         controls
                                                     >
                                                         <source
-                                                            src="{{ url_for('static', filename='uploads/products/' ~ media.filename) }}"
+                                                            src="{{ media.url }}"
                                                         >
                                                     </video>
                                                 {% endif %}
