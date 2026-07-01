@@ -1,3 +1,115 @@
+const VIDEO_MIME_TYPES = [
+    "video/mp4",
+    "video/webm",
+    "video/quicktime"
+];
+
+async function getUploadToken() {
+    const response = await fetch("/admin/media/upload-token", {
+        method: "POST"
+    });
+
+    if (!response.ok) {
+        throw new Error("Could not get an upload authorization token.");
+    }
+
+    const data = await response.json();
+
+    return data.token;
+}
+
+async function uploadVideoDirectly(file) {
+    const { upload } = await import(
+        "/static/js/vercel-blob-client.js"
+    );
+
+    const token = await getUploadToken();
+
+    const blob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/blob-video-upload",
+        clientPayload: token
+    });
+
+    return blob.url;
+}
+
+document.addEventListener("submit", async (event) => {
+    const form = event.target;
+
+    if (!(form instanceof HTMLFormElement)) {
+        return;
+    }
+
+    const fileInput = form.querySelector(
+        'input[name="media_files"]'
+    );
+
+    if (!fileInput) {
+        return;
+    }
+
+    const files = Array.from(fileInput.files || []);
+
+    const videoFiles = files.filter((file) =>
+        VIDEO_MIME_TYPES.includes(file.type)
+    );
+
+    if (!window.USING_BLOB_STORAGE || videoFiles.length === 0) {
+        return;
+    }
+
+    event.preventDefault();
+
+    const submitButton = form.querySelector(
+        'button[type="submit"]'
+    );
+
+    if (submitButton) {
+        submitButton.disabled = true;
+    }
+
+    try {
+        const videoUrls = [];
+
+        for (const file of videoFiles) {
+            videoUrls.push(await uploadVideoDirectly(file));
+        }
+
+        const formData = new FormData();
+
+        for (const [key, value] of new FormData(form).entries()) {
+            if (key !== "media_files") {
+                formData.append(key, value);
+            }
+        }
+
+        files
+            .filter((file) => !videoFiles.includes(file))
+            .forEach((file) => formData.append("media_files", file));
+
+        videoUrls.forEach((url) => formData.append("video_urls", url));
+
+        const response = await fetch(form.action, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error("The product could not be saved.");
+        }
+
+        window.location.href = "/admin/dashboard";
+    } catch (error) {
+        console.error(error);
+        alert(`Video upload failed: ${error.message}`);
+    } finally {
+        if (submitButton) {
+            submitButton.disabled = false;
+        }
+    }
+});
+
 const AJAX_PAGE_LINK_CLASSES = [
     "product-page-link",
     "admin-page-link",

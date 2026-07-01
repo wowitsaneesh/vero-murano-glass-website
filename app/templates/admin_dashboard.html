@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <script>
+        window.USING_BLOB_STORAGE = {{ "true" if using_blob_storage else "false" }};
+    </script>
+
     <main class="dashboard-page">
         <div class="container">
             <section class="dashboard-header">

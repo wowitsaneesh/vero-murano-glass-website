@@ -1,4 +1,5 @@
 from datetime import datetime
+from flask import url_for
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -125,7 +126,7 @@ class ProductMedia(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     filename = db.Column(
-        db.String(255),
+        db.String(600),
         nullable=False
     )
 
@@ -139,6 +140,13 @@ class ProductMedia(db.Model):
         db.ForeignKey("product.id"),
         nullable=False
     )
+
+    @property
+    def url(self):
+        if self.filename.startswith("http://") or self.filename.startswith("https://"):
+            return self.filename
+
+        return url_for("static", filename=f"uploads/products/{self.filename}")
 
 class OrderEnquiry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
