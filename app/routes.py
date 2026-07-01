@@ -1195,6 +1195,10 @@ def home():
         categories=categories
     )
 
+def is_ajax_request():
+    return request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
+
 @app.route("/products")
 def products():
     page = request.args.get("page", 1, type=int)
@@ -1209,8 +1213,14 @@ def products():
         )
     )
 
+    template = (
+        "partials/products_list.html"
+        if is_ajax_request()
+        else "products.html"
+    )
+
     return render_template(
-        "products.html",
+        template,
         products=product_pagination.items,
         pagination=product_pagination,
         selected_category=None
@@ -1243,8 +1253,14 @@ def products_by_category(category_name):
         )
     )
 
+    template = (
+        "partials/products_list.html"
+        if is_ajax_request()
+        else "products.html"
+    )
+
     return render_template(
-        "products.html",
+        template,
         products=product_pagination.items,
         pagination=product_pagination,
         selected_category=selected_category.name
@@ -1710,6 +1726,13 @@ def account():
         )
     )
 
+    if is_ajax_request():
+        return render_template(
+            "partials/account_orders_panel.html",
+            order_enquiries=order_pagination.items,
+            order_pagination=order_pagination
+        )
+
     return render_template(
         "account.html",
         user=user,
@@ -1759,6 +1782,25 @@ def admin_dashboard():
     )
 
     orders = order_pagination.items
+
+    if is_ajax_request():
+        ajax_section = request.args.get("ajax_section")
+
+        if ajax_section == "products":
+            return render_template(
+                "partials/admin_products_panel.html",
+                products=products,
+                product_pagination=product_pagination,
+                categories=categories
+            )
+
+        if ajax_section == "orders":
+            return render_template(
+                "partials/admin_orders_panel.html",
+                orders=orders,
+                order_pagination=order_pagination,
+                product_pagination=product_pagination
+            )
 
     return render_template(
         "admin_dashboard.html",

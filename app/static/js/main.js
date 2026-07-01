@@ -1,96 +1,65 @@
-const categoryCarousel = document.getElementById("categoryCarousel");
-const previousCategoryButton = document.querySelector(
-    ".category-carousel-prev"
-);
-const nextCategoryButton = document.querySelector(
-    ".category-carousel-next"
-);
+const AJAX_PAGE_LINK_CLASSES = [
+    "product-page-link",
+    "admin-page-link",
+    "order-page-link"
+];
 
-if (
-    categoryCarousel &&
-    previousCategoryButton &&
-    nextCategoryButton
-) {
-    let isAnimating = false;
+function setupAjaxPagination(containerId) {
+    const container = document.getElementById(containerId);
 
-    function getCardDistance() {
-        const firstCard = categoryCarousel.querySelector(".category-card");
-
-        if (!firstCard) {
-            return 0;
-        }
-
-        const trackStyles = window.getComputedStyle(categoryCarousel);
-        const gap = parseFloat(trackStyles.columnGap) || 0;
-
-        return firstCard.getBoundingClientRect().width + gap;
+    if (!container) {
+        return;
     }
 
-    nextCategoryButton.addEventListener("click", () => {
-        if (isAnimating) {
+    container.addEventListener("click", async (event) => {
+        const link = event.target.closest("a");
+
+        if (!link) {
             return;
         }
 
-        const firstCard = categoryCarousel.firstElementChild;
-        const distance = getCardDistance();
-
-        if (!firstCard || distance === 0) {
-            return;
-        }
-
-        isAnimating = true;
-
-        categoryCarousel.style.transition = "transform 0.4s ease";
-        categoryCarousel.style.transform = `translateX(-${distance}px)`;
-
-        categoryCarousel.addEventListener(
-            "transitionend",
-            () => {
-                categoryCarousel.appendChild(firstCard);
-
-                categoryCarousel.style.transition = "none";
-                categoryCarousel.style.transform = "translateX(0)";
-
-                isAnimating = false;
-            },
-            { once: true }
+        const isPaginationLink = AJAX_PAGE_LINK_CLASSES.some(
+            (className) => link.classList.contains(className)
         );
-    });
 
-    previousCategoryButton.addEventListener("click", () => {
-        if (isAnimating) {
+        if (!isPaginationLink) {
             return;
         }
 
-        const lastCard = categoryCarousel.lastElementChild;
-        const distance = getCardDistance();
+        event.preventDefault();
 
-        if (!lastCard || distance === 0) {
-            return;
+        try {
+            const response = await fetch(link.href, {
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to load page.");
+            }
+
+            container.innerHTML = await response.text();
+
+            const historyUrl = new URL(link.href);
+            historyUrl.searchParams.delete("ajax_section");
+            window.history.pushState({}, "", historyUrl);
+
+            container.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        } catch (error) {
+            console.error(error);
+            window.location.href = link.href;
         }
-
-        isAnimating = true;
-
-        categoryCarousel.prepend(lastCard);
-
-        categoryCarousel.style.transition = "none";
-        categoryCarousel.style.transform = `translateX(-${distance}px)`;
-
-        categoryCarousel.offsetHeight;
-
-        categoryCarousel.style.transition = "transform 0.4s ease";
-        categoryCarousel.style.transform = "translateX(0)";
-
-        categoryCarousel.addEventListener(
-            "transitionend",
-            () => {
-                categoryCarousel.style.transition = "none";
-                isAnimating = false;
-            },
-            { once: true }
-        );
     });
 }
+
+[
+    "productsListContainer",
+    "adminProductsPanel",
+    "adminOrdersPanel",
+    "accountOrdersPanel"
+].forEach(setupAjaxPagination);
 
 const quantityButtons = document.querySelectorAll(".quantity-button");
 
