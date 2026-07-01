@@ -2,6 +2,27 @@
 
 {% block content %}
     <main>
+        <section class="category-quicklinks">
+            <div class="container category-quicklinks-inner">
+                <p class="category-quicklinks-label">Shop by category</p>
+
+                <div class="category-quicklinks-track">
+                    {% for category in categories %}
+                        <a
+                            href="{{ url_for('products_by_category', category_name=category.name) }}"
+                            class="category-pill"
+                        >
+                            {{ category.name }}
+                        </a>
+                    {% else %}
+                        <p class="category-quicklinks-empty">
+                            No categories are available yet.
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
         <section class="hero">
             <div class="container">
                 <p class="eyebrow-text">Murano-inspired jewellery</p>
@@ -16,69 +37,6 @@
                 <a href="{{ url_for('products') }}" class="btn btn-dark hero-button">
                     Shop Collection
                 </a>
-            </div>
-        </section>
-
-        <section class="featured-section">
-            <div class="container">
-                <p class="eyebrow-text">Shop by category</p>
-                <h2>Find your next statement piece</h2>
-
-                {% if categories|length > 5 %}
-                    <div class="category-carousel-wrapper">
-                        <button
-                            type="button"
-                            class="category-carousel-button category-carousel-prev"
-                            aria-label="Previous category"
-                        >
-                            &#10094;
-                        </button>
-
-                        <div class="category-carousel-viewport">
-                            <div class="category-carousel-track" id="categoryCarousel">
-                                {% for category in categories %}
-                                    <a
-                                        href="{{ url_for('products_by_category', category_name=category.name) }}"
-                                        class="category-card"
-                                    >
-                                        <span>{{ category.name }}</span>
-
-                                        <small>
-                                            Explore {{ category.products|length }}
-                                            product{% if category.products|length != 1 %}s{% endif %}
-                                        </small>
-                                    </a>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        <button
-                            type="button"
-                            class="category-carousel-button category-carousel-next"
-                            aria-label="Next category"
-                        >
-                            &#10095;
-                        </button>
-                    </div>
-                {% else %}
-                    <div class="category-grid category-grid-static">
-                        {% for category in categories %}
-                            <a
-                                href="{{ url_for('products_by_category', category_name=category.name) }}"
-                                class="category-card"
-                            >
-                                <span>{{ category.name }}</span>
-
-                                <small>
-                                    Explore {{ category.products|length }}
-                                    product{% if category.products|length != 1 %}s{% endif %}
-                                </small>
-                            </a>
-                        {% else %}
-                            <p>No categories are available yet.</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
             </div>
         </section>
     </main>
