@@ -1,5 +1,0 @@
-[tool.vercel]
-entrypoint = "run:app"
-
-[tool.vercel.scripts]
-build = "python build_static.py"
